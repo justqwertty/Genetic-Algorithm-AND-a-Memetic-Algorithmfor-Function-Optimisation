@@ -64,3 +64,15 @@ def main(functions, dims, runs, out="results"):
                         print(f"{alg} {func_name} d={dim} run={r}  best_f={row['best_f']:.2e}  "
                               f"{row['time_s']:.1f}s")
     print("Saved", csv_path)
+
+if __name__ == "__main__":
+    import argparse
+    ap = argparse.ArgumentParser(description="Run GA vs MA experiments.")
+    ap.add_argument("--functions", nargs="+", default=list(FUNCTIONS),
+                    help="which functions (default: all)")
+    ap.add_argument("--dims", nargs="+", type=int, default=[10, 30, 50],
+                    help="which dimensions (default: 10 30 50)")
+    ap.add_argument("--runs", type=int, default=10, help="runs per setting (default: 10)")
+    ap.add_argument("--out", default="results", help="output folder")
+    args = ap.parse_args()
+    main(args.functions, args.dims, args.runs, args.out)
