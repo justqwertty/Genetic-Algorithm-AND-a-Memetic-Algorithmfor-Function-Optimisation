@@ -66,10 +66,32 @@ def gaussian_mutation(pop, rate, bounds, rng, sigma=0.1):
 
 def polynomial_mutation(pop, rate, bounds, rng, eta=20.0):
     low, high = bounds
-    mask = rng.random(pop.shape) < rate                                # same as Gaussian
+    mask = rng.random(pop.shape) < rate                               
     u = rng.random(pop.shape)
     delta = np.where(u < 0.5,
                      (2 * u) ** (1 / (eta + 1)) - 1,
                      1 - (2 * (1 - u)) ** (1 / (eta + 1))) 
     new_pop = pop + mask * delta * (high - low)
-    return np.clip(new_pop, low ,high)                            # clip
+    return np.clip(new_pop, low ,high)                          
+
+
+
+def mutate(pop, rate, method, bounds, rng, sigma=0.1, eta=20.0):
+
+    if method == "gaussian":
+        return gaussian_mutation(pop, rate, bounds, rng, sigma)
+    if method == "polynomial":
+        return polynomial_mutation(pop, rate, bounds, rng, eta)
+    raise ValueError(f"Unknown mutation '{method}', use 'gaussian' or 'polynomial'")
+
+
+
+def apply_elitism(old_pop, old_fit, new_pop, new_fit, n_elites):
+    if n_elites == 0:
+        return new_pop, new_fit
+    elite = np.argsort(old_fit)[:n_elites]      
+    worst = np.argsort(new_fit)[-n_elites:]     
+    new_pop, new_fit = new_pop.copy(), new_fit.copy()
+    new_pop[worst] = old_pop[elite]             
+    new_fit[worst] = old_fit[elite]             
+    return new_pop, new_fit
