@@ -40,3 +40,25 @@ def sbx_crossover(p1, p2, bounds, rng, eta=15.0):
     c2 = 0.5 * ((1 - beta) * p1 + (1 + beta) * p2)
     low, high = bounds
     return np.clip(c1, low, high), np.clip(c2, low, high)
+
+
+
+def crossover(parents, rate, method, bounds, rng, eta=15.0, alpha=0.5):
+    if method not in ("sbx", "blx"):
+        raise ValueError(f"Unknown crossover '{method}', use 'sbx' or 'blx'")
+    children = parents.copy()
+    for i in range(0, len(parents) - 1, 2):
+        if rng.random() < rate:
+            p1, p2 = parents[i], parents[i + 1]
+            if method == "sbx":
+                children[i], children[i + 1] = sbx_crossover(p1, p2, bounds, rng, eta)
+            else:
+                children[i], children[i + 1] = blx_alpha_crossover(p1, p2, bounds, rng, alpha)
+    return children
+
+def gaussian_mutation(pop, rate, bounds, rng, sigma=0.1):
+    low, high = bounds
+    mask = rng.random(pop.shape) < rate      
+    noise =  rng.normal(0, sigma * (high - low), size=pop.shape)     
+    new_pop = pop + mask * noise   
+    return np.clip(new_pop, low , high)      
