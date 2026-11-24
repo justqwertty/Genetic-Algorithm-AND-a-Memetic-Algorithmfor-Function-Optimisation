@@ -15,7 +15,6 @@ def tournament_selection(pop, fitness, n_select, k, rng):
     return np.array(parents)
 
 def blx_alpha_crossover(p1, p2, bounds, rng, alpha=0.5):
-    """BLX-alpha: each child gene is random in the parents' range, stretched by alpha."""
     lo = np.minimum(p1,p2)        # smaller of p1 and p2, number by number (hint: np.minimum)
     hi = np.maximum(p1,p2)        # larger of p1 and p2 (hint: np.maximum)
     gap = hi - lo
@@ -31,7 +30,6 @@ def blx_alpha_crossover(p1, p2, bounds, rng, alpha=0.5):
     return c1, c2
 
 def sbx_crossover(p1, p2, bounds, rng, eta=15.0):
-    """Simulated Binary Crossover: children spread symmetrically around the parents."""
     u = rng.random(p1.shape)          # one random number per gene
 
     beta = np.where(u <= 0.5,
