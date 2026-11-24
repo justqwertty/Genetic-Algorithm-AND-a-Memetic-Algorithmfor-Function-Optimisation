@@ -6,7 +6,7 @@ def init_population(pop_size, dim, bounds, rng):
     return pop
     
 def tournament_selection(pop, fitness, n_select, k, rng):
-    """Pick n_select parents. Each one is the best of k random individuals."""
+
     parents = []
     for _ in range(n_select):
         idx = rng.integers(0,len(pop),size =k)        # k random row numbers
