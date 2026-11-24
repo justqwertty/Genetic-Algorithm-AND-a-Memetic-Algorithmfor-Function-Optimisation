@@ -52,9 +52,10 @@ def run(func, bounds, dim, params=None, callback=None):
     mut_method = p.get("mutation", "polynomial")
     mut_rate = p.get("mutation_rate", 1 / dim)
     n_elites = p.get("n_elites", 2)
-    ls_every = p.get("ls_every", 5)     
-    ls_top_k = p.get("ls_top_k", 3)      
-    ls_steps = p.get("ls_steps", 30)     
+    ls_every = p.get("ls_every", 10)
+    ls_top_k = p.get("ls_top_k", 1)
+    ls_steps = p.get("ls_steps", 50)
+    ls_rho = p.get("ls_rho", 0.001)
 
     # check the inputs before doing any work
     low, high = bounds
@@ -100,7 +101,7 @@ def run(func, bounds, dim, params=None, callback=None):
             for i in best_rows:
                 budget_left = max_evals - evals
                 pop[i], fit[i], used = solis_wets(func, pop[i], fit[i], bounds, rng,
-                                                  ls_steps, budget_left)
+                                                  ls_steps, budget_left, ls_rho)
                 evals += used                            # local search counts too!
 
         history.append(fit.min())
