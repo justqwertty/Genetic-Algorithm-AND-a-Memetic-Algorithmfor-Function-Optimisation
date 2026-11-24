@@ -1,19 +1,22 @@
-import random
+import time
+import numpy as np
+from . import operators as op
 
-def ga(random_solution, fitness, crossover, mutate,
-       pop_size=30, generations=100, n_elites=2, seed=0):
-    random.seed(seed)                                   # same seed -> same run (point 5)
-    pop = [random_solution() for _ in range(pop_size)]
-    for gen in range(generations):
-        scored = sorted(pop, key=fitness, reverse=True) # bigger = better (point 2)
-        new_pop = scored[:n_elites]                     # elitism (point 4)
-        while len(new_pop) < pop_size:
-            p1 = tournament(pop, fitness)               # tournament selection (point 4)
-            p2 = tournament(pop, fitness)
-            new_pop.append(mutate(crossover(p1, p2)))
-        pop = new_pop
-    best = max(pop, key=fitness)
-    return best, fitness(best)
 
-def tournament(pop, fitness, k=3):
-    return max(random.sample(pop, k), key=fitness)
+def run(func, bounds, dim, params=None, callback=None):
+    """Run the GA until max_evals fitness evaluations are used."""
+    p = params or {}
+    pop_size = p.get("pop_size", 100)
+    max_evals = p.get("max_evals", 10000 * dim)
+    rng = np.random.default_rng(p.get("seed"))
+    start = time.perf_counter()
+
+    pop = op.init_population(pop_size, dim, bounds, rng)                                  # step 2: random population
+    fit = np.array([func(x) for x in pop])     # score everyone
+    evals = pop_size                                # how many evaluations so far?
+    history = [fit.min()]
+
+    # step 3 goes here next
+
+    return {"best_f": fit.min(), "evals": evals, "history": history,
+            "time_s": time.perf_counter() - start}
