@@ -62,3 +62,14 @@ def gaussian_mutation(pop, rate, bounds, rng, sigma=0.1):
     noise =  rng.normal(0, sigma * (high - low), size=pop.shape)     
     new_pop = pop + mask * noise   
     return np.clip(new_pop, low , high)      
+
+
+def polynomial_mutation(pop, rate, bounds, rng, eta=20.0):
+    low, high = bounds
+    mask = rng.random(pop.shape) < rate                                # same as Gaussian
+    u = rng.random(pop.shape)
+    delta = np.where(u < 0.5,
+                     (2 * u) ** (1 / (eta + 1)) - 1,
+                     1 - (2 * (1 - u)) ** (1 / (eta + 1))) 
+    new_pop = pop + mask * delta * (high - low)
+    return np.clip(new_pop, low ,high)                            # clip
