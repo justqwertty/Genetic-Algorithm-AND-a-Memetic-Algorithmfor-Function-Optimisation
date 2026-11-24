@@ -7,6 +7,8 @@ def run(func, bounds, dim, params=None, callback=None):
     """Run the GA until max_evals fitness evaluations are used."""
     p = params or {}
     pop_size = p.get("pop_size", 100)
+    if dim < 1:
+        raise ValueError(f"dim must be at least 1, got {dim}")# input validation
     max_evals = p.get("max_evals", 10000 * dim)
     rng = np.random.default_rng(p.get("seed"))
     start = time.perf_counter()
@@ -40,6 +42,6 @@ def run(func, bounds, dim, params=None, callback=None):
         history.append(fit.min())
         if callback:
             callback(gen, fit.min())
-
+    best = np.argmin(fit)
     return {"best_f": fit.min(), "evals": evals, "history": history,
-            "time_s": time.perf_counter() - start}
+            "time_s": time.perf_counter() - start,"best_x": pop[best], "best_f": fit[best], "generations": gen}
